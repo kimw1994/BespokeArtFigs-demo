@@ -1,0 +1,41 @@
+<div class="language-switcher">
+  <form action="{{ routes.set_locale_url }}" method="post" class="localization-form">
+    <input type="hidden" name="return_to" value="{{ request.path }}">
+    <div class="select-wrapper">
+      <label for="locale-selector" class="visually-hidden">{{ 'localization.language_label' | t }}</label>
+      <select id="locale-selector" name="locale" class="localization-selector">
+        {%- for language in localization.available_languages -%}
+          <option value="{{ language.iso_code }}" {% if language.iso_code == request.locale.iso_code %}selected{% endif %}>
+            {{ language.name }}
+          </option>
+        {%- endfor -%}
+      </select>
+      <button type="submit" class="localization-submit visually-hidden">{{ 'localization.submit' | t }}</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .language-switcher {
+    display: inline-block;
+    margin: 0 10px;
+  }
+  .select-wrapper {
+    position: relative;
+  }
+  .localization-selector {
+    background: transparent;
+    border: 1px solid rgba(var(--color-foreground), 0.2);
+    border-radius: var(--buttons-radius);
+    padding: 8px 16px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  /* Style for RTL languages */
+  [dir="rtl"] .language-switcher {
+    margin: 0 10px;
+  }
+</style>
