@@ -1,11 +1,15 @@
 <!doctype html>
-<html class="js" lang="{{ request.locale.iso_code }}">
+<html class="js" lang="{{ request.locale.iso_code }}" dir="{{ request.locale.direction }}">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- for language in localization.available_languages -%}
+      <link rel="alternate" hreflang="{{ language.iso_code }}" href="{{ canonical_url | replace: request.locale.iso_code, language.iso_code }}">
+    {%- endfor -%}
 
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
@@ -308,6 +312,11 @@
     {%- endif -%}
 
     {% sections 'header-group' %}
+
+    <!-- Language Switcher -->
+    {%- if localization.available_languages.size > 1 -%}
+      {% render 'language-switcher' %}
+    {%- endif -%}
 
     <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
       {{ content_for_layout }}
