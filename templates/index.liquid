@@ -1,0 +1,86 @@
+{% extends 'layout/theme.liquid' %}
+
+{% block content %}
+  {# Hero Banner Section #}
+  {# Hero Banner with high-quality oil painting #}
+  {% section 'hero-banner' with settings: { 
+    image: 'shopify://shop_images/hero-oil-painting.jpg',
+    alt_text: 'Custom Oil Paintings for Home Decor',
+    heading: 'Bespoke Oil Paintings',
+    subheading: 'Handcrafted Art for Your Unique Space',
+    button_label: 'Start Creating',
+    button_link: '/collections/all'
+  } %}
+
+  {# Personalized Home Decor Section #}
+  {% section 'collection-gallery' with settings: { 
+    title: section.settings.personalized_title,
+    collection_handle: 'personalized-home-decor',
+    products_per_row: 3,
+    show_customization_badge: true,
+    image_ratio: 'square',
+    alt_text_prefix: 'Personalized home decor oil painting'
+  } %}
+
+  {# Custom Gifts Section #}
+  {% section 'collection-gallery' with settings: { 
+    title: section.settings.gifts_title,
+    collection_handle: 'custom-gifts',
+    products_per_row: 3,
+    show_occasion_tags: true,
+    image_ratio: 'square',
+    alt_text_prefix: 'Custom gift oil painting'
+  } %}
+
+  {# Emotional Memories Section #}
+  {% section 'collection-gallery' with settings: { 
+    title: section.settings.memories_title,
+    collection_handle: 'family-portraits',
+    products_per_row: 3,
+    show_testimonials: true,
+    image_ratio: 'portrait',
+    alt_text_prefix: 'Family memory oil painting'
+  } %}
+
+  {# Collectible Art Section #}
+  {% section 'collection-gallery' with settings: { 
+    title: section.settings.collectible_title,
+    collection_handle: 'limited-editions',
+    products_per_row: 3,
+    show_availability_count: true,
+    image_ratio: 'square',
+    alt_text_prefix: 'Limited edition collectible oil painting'
+  } %}
+{% endblock %}
+
+{% schema %}
+{
+  "name": "Home Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "personalized_title",
+      "label": "Personalized Home Decor Title",
+      "default": "Personalized Home Decor"
+    },
+    {
+      "type": "text",
+      "id": "gifts_title",
+      "label": "Custom Gifts Title",
+      "default": "Custom Gifts"
+    },
+    {
+      "type": "text",
+      "id": "memories_title",
+      "label": "Emotional Memories Title",
+      "default": "Emotional Memories"
+    },
+    {
+      "type": "text",
+      "id": "collectible_title",
+      "label": "Collectible Art Title",
+      "default": "Collectible Art"
+    }
+  ]
+}
+{% endschema %}
