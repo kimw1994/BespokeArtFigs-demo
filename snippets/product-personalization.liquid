@@ -1,0 +1,159 @@
+<div class="product-personalization">
+  <h3 class="personalization-heading h4">{{ 'products.personalization.title' | t }}</h3>
+  
+  <form id="personalization-form" class="personalization-form">
+    <!-- Photo Upload -->
+    <div class="form-group">
+      <label for="photo-upload">{{ 'products.personalization.photo_upload' | t }}</label>
+      <input type="file" id="photo-upload" accept="image/*" class="file-upload">
+      <p class="form-hint">{{ 'products.personalization.photo_hint' | t }}</p>
+    </div>
+    
+    <!-- Style Selection -->
+    <div class="form-group">
+      <label>{{ 'products.personalization.style' | t }}</label>
+      <div class="style-options">
+        {% for style in product.metafields.personalization.styles.value %}
+          <label class="style-option">
+            <input type="radio" name="style" value="{{ style.value }}" {% if forloop.first %}checked{% endif %}>
+            <span class="style-name">{{ style.label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- Special Instructions -->
+    <div class="form-group">
+      <label for="special-instructions">{{ 'products.personalization.instructions' | t }}</label>
+      <textarea id="special-instructions" rows="3" placeholder="{{ 'products.personalization.instructions_placeholder' | t }}"></textarea>
+    </div>
+  </form>
+  
+  <!-- Preview Section -->
+  <div class="preview-section">
+    <h4 class="preview-heading">{{ 'products.personalization.preview' | t }}</h4>
+    <div class="preview-container">
+      <img id="preview-image" src="{{ product.featured_image.src }}" alt="{{ product.title }}" class="preview-image">
+      <div id="preview-overlay" class="preview-overlay"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-personalization {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .personalization-heading {
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .file-upload {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .form-hint {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+  }
+  
+  .style-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .style-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .preview-section {
+    margin-top: 30px;
+  }
+  
+  .preview-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .preview-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  
+  .preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .style-options {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const photoUpload = document.getElementById('photo-upload');
+    const previewImage = document.getElementById('preview-image');
+    const styleOptions = document.querySelectorAll('input[name="style"]');
+    
+    // Handle photo upload
+    photoUpload.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Handle style selection
+    styleOptions.forEach(option => {
+      option.addEventListener('change', function() {
+        // Update preview based on style
+        updatePreviewStyle(this.value);
+      });
+    });
+    
+    function updatePreviewStyle(style) {
+      const previewOverlay = document.getElementById('preview-overlay');
+      
+      // Reset styles
+      previewOverlay.className = 'preview-overlay';
+      
+      // Add style-specific class
+      previewOverlay.classList.add('style-' + style);
+      
+      // You could add more style-specific logic here
+    }
+  });
+</script>

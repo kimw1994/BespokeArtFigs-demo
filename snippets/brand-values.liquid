@@ -1,0 +1,139 @@
+<div class="brand-values">
+  <h3 class="brand-values-heading h4">{{ 'products.brand_values.title' | t }}</h3>
+  
+  <div class="brand-values-container">
+    <div class="brand-value-item">
+      <div class="brand-value-icon">
+        {{ 'icon-paintbrush.svg' | inline_asset_content }}
+      </div>
+      <h4 class="brand-value-title">{{ 'products.brand_values.artistic_quality' | t }}</h4>
+      <p class="brand-value-description">{{ 'products.brand_values.artistic_quality_desc' | t }}</p>
+    </div>
+    
+    <div class="brand-value-item">
+      <div class="brand-value-icon">
+        {{ 'icon-heart.svg' | inline_asset_content }}
+      </div>
+      <h4 class="brand-value-title">{{ 'products.brand_values.emotional_connections' | t }}</h4>
+      <p class="brand-value-description">{{ 'products.brand_values.emotional_connections_desc' | t }}</p>
+      
+      <!-- Customer stories -->
+      <div class="customer-stories">
+        <h5 class="stories-heading">{{ 'products.brand_values.customer_stories' | t }}</h5>
+        <div class="story-item">
+          <p class="story-text">{{ 'products.brand_values.story_1' | t }}</p>
+          <p class="story-author">{{ 'products.brand_values.story_1_author' | t }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="brand-value-item">
+      <div class="brand-value-icon">
+        {{ 'icon-star.svg' | inline_asset_content }}
+      </div>
+      <h4 class="brand-value-title">{{ 'products.brand_values.collection_value' | t }}</h4>
+      <p class="brand-value-description">{{ 'products.brand_values.collection_value_desc' | t }}</p>
+      
+      <!-- Limited edition badge -->
+      {% if product.tags contains 'limited' %}
+        <div class="limited-edition-badge">
+          <span>{{ 'products.brand_values.limited_edition' | t }}</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .brand-values {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+  }
+  
+  .brand-values-heading {
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .brand-values-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+  }
+  
+  .brand-value-item {
+    flex: 1 1 300px;
+    max-width: 350px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .brand-value-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+  }
+  
+  .brand-value-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  
+  .brand-value-description {
+    margin-bottom: 15px;
+    color: #666;
+  }
+  
+  .customer-stories {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eaeaea;
+  }
+  
+  .stories-heading {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .story-item {
+    margin-bottom: 10px;
+  }
+  
+  .story-text {
+    font-style: italic;
+    color: #555;
+  }
+  
+  .story-author {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .limited-edition-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    margin-top: 15px;
+    background-color: #e63946;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .brand-values-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>

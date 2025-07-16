@@ -1,0 +1,320 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .upsell {
+    margin: 0 auto;
+  }
+
+  .upsell__title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: var(--font-heading-weight);
+  }
+
+  .upsell__subtitle {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    color: rgba(var(--color-foreground), 0.75);
+  }
+
+  .upsell__products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--grid-mobile-vertical-spacing) var(--grid-mobile-horizontal-spacing);
+  }
+
+  .upsell__product {
+    position: relative;
+  }
+
+  .upsell__product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .upsell__product-image {
+    position: relative;
+    padding-bottom: 100%;
+    overflow: hidden;
+  }
+
+  .upsell__product-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .upsell__product-card:hover .upsell__product-image img {
+    transform: scale(1.05);
+  }
+
+  .upsell__product-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .upsell__product-title {
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+    font-weight: var(--font-heading-weight);
+  }
+
+  .upsell__product-price {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .upsell__product-occasion {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: rgba(var(--color-badge-background), 0.2);
+    color: rgb(var(--color-badge-foreground));
+    border-radius: var(--badge-corner-radius);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .upsell__product-actions {
+    margin-top: auto;
+  }
+
+  .upsell__add-to-cart,
+  .upsell__add-to-wishlist {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: var(--buttons-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upsell__add-to-cart {
+    background-color: rgb(var(--color-button));
+    color: rgb(var(--color-button-text));
+    margin-bottom: 0.75rem;
+  }
+
+  .upsell__add-to-cart:hover {
+    background-color: rgba(var(--color-button), 0.9);
+  }
+
+  .upsell__add-to-wishlist {
+    background-color: transparent;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    color: rgb(var(--color-foreground));
+  }
+
+  .upsell__add-to-wishlist:hover {
+    background-color: rgba(var(--color-border), 0.1);
+  }
+
+  .upsell__scarcity-alert {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: rgba(220, 38, 38, 0.1);
+    color: rgb(220, 38, 38);
+    border-radius: var(--badge-corner-radius);
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }
+
+  .upsell__lifestyle-tip {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background-color: rgba(var(--color-background-contrast), 0.1);
+    border-radius: var(--inputs-radius);
+  }
+
+  .upsell__lifestyle-tip-title {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    font-weight: var(--font-heading-weight);
+  }
+
+  .upsell__lifestyle-tip-content {
+    font-size: 1.4rem;
+    color: rgba(var(--color-foreground), 0.75);
+  }
+
+  @media screen and (min-width: 750px) {
+    .upsell__products {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--grid-desktop-vertical-spacing) var(--grid-desktop-horizontal-spacing);
+    }
+
+    .upsell__title {
+      font-size: 2rem;
+    }
+
+    .upsell__subtitle {
+      font-size: 1.6rem;
+    }
+  }
+{%- endstyle -%}
+
+<div class="upsell">
+  <h2 class="upsell__title">{{ 'sections.upsell.title' | t }}</h2>
+  <p class="upsell__subtitle">{{ 'sections.upsell.subtitle' | t }}</p>
+
+  <div class="upsell__products" id="UpsellProducts">
+    {%- if cart.items.size > 0 -%}
+      {%- assign current_product = cart.items.first.product -%}
+      {%- assign related_products = current_product.related_products | limit: 4 -%}
+
+      {%- if related_products.size > 0 -%}
+        {%- for product in related_products -%}
+          <div class="upsell__product" data-product-id="{{ product.id }}">
+            <div class="upsell__product-card">
+              <div class="upsell__product-image">
+                <img
+                  src="{{ product.featured_image | image_url: width: 400 }}"
+                  alt="{{ product.title | escape }}"
+                  loading="lazy"
+                >
+              </div>
+              <div class="upsell__product-details">
+                <h3 class="upsell__product-title">{{ product.title }}</h3>
+                <div class="upsell__product-price">{{ product.price | money }}</div>
+
+                {%- if product.tags contains 'wedding' -%}
+                  <span class="upsell__product-occasion">{{ 'sections.upsell.occasions.wedding' | t }}</span>
+                {%- elsif product.tags contains 'birthday' -%}
+                  <span class="upsell__product-occasion">{{ 'sections.upsell.occasions.birthday' | t }}</span>
+                {%- elsif product.tags contains 'anniversary' -%}
+                  <span class="upsell__product-occasion">{{ 'sections.upsell.occasions.anniversary' | t }}</span>
+                {%- endif -%}
+
+                {%- if product.tags contains 'limited' and product.inventory_quantity <= 5 -%}
+                  <span class="upsell__scarcity-alert">{{ 'sections.upsell.scarcity_alert' | t: quantity: product.inventory_quantity }}</span>
+                {%- endif -%}
+
+                <div class="upsell__product-actions">
+                  <button
+                    class="upsell__add-to-cart"
+                    data-product-id="{{ product.id }}"
+                    aria-label="{{ 'sections.upsell.add_to_cart' | t: product: product.title }}"
+                  >
+                    {{ 'sections.upsell.add_to_cart' | t }}
+                  </button>
+                  <button
+                    class="upsell__add-to-wishlist"
+                    data-product-id="{{ product.id }}"
+                    aria-label="{{ 'sections.upsell.add_to_wishlist' | t: product: product.title }}"
+                  >
+                    {{ 'sections.upsell.add_to_wishlist' | t }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <p>{{ 'sections.upsell.no_related_products' | t }}</p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+  <div class="upsell__lifestyle-tip">
+    <h3 class="upsell__lifestyle-tip-title">{{ 'sections.upsell.lifestyle_tip.title' | t }}</h3>
+    <p class="upsell__lifestyle-tip-content">{{ 'sections.upsell.lifestyle_tip.content' | t }}</p>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add to cart functionality
+    const addToCartButtons = document.querySelectorAll('.upsell__add-to-cart');
+    addToCartButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+        addToCart(productId);
+      });
+    });
+
+    // Add to wishlist functionality
+    const addToWishlistButtons = document.querySelectorAll('.upsell__add-to-wishlist');
+    addToWishlistButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+        addToWishlist(productId);
+      });
+    });
+  });
+
+  function addToCart(productId) {
+    // AJAX request to add product to cart
+    fetch('{{ routes.cart_add_url }}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({
+        items: [{
+          id: productId,
+          quantity: 1
+        }]
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Update cart UI
+      updateCart(data);
+      // Show success message
+      showNotification('{{ 'sections.upsell.add_to_cart_success' | t }}');
+    })
+    .catch(error => {
+      console.error('Error adding to cart:', error);
+      showNotification('{{ 'sections.upsell.add_to_cart_error' | t }}', true);
+    });
+  }
+
+  function addToWishlist(productId) {
+    // This is a placeholder for wishlist functionality
+    // In a real implementation, you would send a request to your wishlist API
+    showNotification('{{ 'sections.upsell.add_to_wishlist_success' | t }}');
+  }
+
+  function updateCart(data) {
+    // This function would update the cart UI
+    // It's a placeholder for the actual implementation
+  }
+
+  function showNotification(message, isError = false) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '1rem 2rem';
+    notification.style.backgroundColor = isError ? 'rgba(220, 38, 38, 0.9)' : 'rgba(16, 185, 129, 0.9)';
+    notification.style.color = 'white';
+    notification.style.borderRadius = 'var(--buttons-radius)';
+    notification.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+    notification.style.zIndex = '1000';
+    notification.style.transition = 'all 0.3s ease';
+    notification.textContent = message;
+
+    // Add to document
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  }
+</script>

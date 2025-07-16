@@ -1,0 +1,168 @@
+{% comment %}
+  Product Card Snippet
+  Purpose: Display product information with emotional connections and collection value
+  Target: Art collectors and home decor users
+{% endcomment %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+<div class="product-card" aria-label="{{ product.title }}" tabindex="0">
+  <div class="product-card__image-container">
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | img_url: '500x500' }}"
+        alt="{{ product.title }}"
+        class="product-card__image"
+        loading="lazy"
+      >
+    {%- endif -%}
+
+    {%- comment -%}
+      Badges for Original Artwork or Limited Edition Investment
+    {%- endcomment -%}
+    <div class="product-card__badges">
+      {%- if product.tags contains 'original' -%}
+        <div class="badge original" aria-label="Original Artwork">
+          {{ 'snippets.product_card.original_badge' | t }}
+        </div>
+      {%- endif -%}
+      {%- if product.tags contains 'limited' -%}
+        <div class="badge limited" aria-label="Limited Edition Investment">
+          {{ 'snippets.product_card.limited_badge' | t }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="product-card__info">
+    <h3 class="product-card__title">{{ product.title }}</h3>
+    <p class="product-card__price">{{ current_variant.price | money }}</p>
+
+    {%- comment -%}
+      Emotional connection story
+    {%- endcomment -%}
+    {%- if product.metafields.story.short_story -%}
+      <p class="product-card__story">{{ product.metafields.story.short_story }}</p>
+    {%- endif -%}
+
+    {%- comment -%}
+      Scarcity notification for collectors
+    {%- endcomment -%}
+    {%- if product.tags contains 'limited' and product.inventory_quantity > 0 and product.inventory_quantity <= 5 -%}
+      <div class="product-card__scarcity" role="alert">
+        {{ 'snippets.product_card.scarcity_message' | t: quantity: product.inventory_quantity }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <a href="{{ product.url }}" class="product-card__link" aria-label="View {{ product.title }}">
+    {{ 'snippets.product_card.view_details' | t }}
+  </a>
+</div>
+
+<style>
+  .product-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .product-card__image-container {
+    position: relative;
+    padding-top: 100%;
+    overflow: hidden;
+  }
+
+  .product-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product-card__image:hover {
+    transform: scale(1.05);
+  }
+
+  .product-card__badges {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+  }
+
+  .badge.original {
+    background-color: #2a9d8f;
+  }
+
+  .badge.limited {
+    background-color: #e9c46a;
+    color: #264653;
+  }
+
+  .product-card__info {
+    padding: 15px;
+  }
+
+  .product-card__title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .product-card__price {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .product-card__story {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .product-card__scarcity {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #fff1e6;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #e76f51;
+  }
+
+  .product-card__link {
+    display: block;
+    padding: 10px 15px;
+    background-color: #264653;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .product-card__link:hover {
+    background-color: #2a9d8f;
+  }
+</style>

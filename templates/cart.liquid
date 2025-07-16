@@ -1,0 +1,149 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .cart-page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .cart-page__header {
+    margin-bottom: 2rem;
+  }
+
+  .cart-page__title {
+    font-size: 2.5rem;
+    font-weight: var(--font-heading-weight);
+    line-height: 1.2;
+  }
+
+  .cart-upsell {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: rgba(var(--color-background), 0.7);
+    border-radius: var(--popup-corner-radius);
+  }
+
+  .cart-upsell__title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: var(--font-heading-weight);
+  }
+
+  .gift-wrapping {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: var(--inputs-radius);
+  }
+
+  .gift-wrapping__title {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    font-weight: var(--font-heading-weight);
+  }
+
+  .gift-wrapping__options {
+    margin-bottom: 1rem;
+  }
+
+  .gift-wrapping__option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .gift-wrapping__option input {
+    margin-right: 0.75rem;
+  }
+
+  .gift-message {
+    margin-top: 1rem;
+  }
+
+  .gift-message textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: var(--inputs-radius);
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cart-page {
+      padding: 0 2rem;
+    }
+
+    .cart-page__title {
+      font-size: 3rem;
+    }
+  }
+{%- endstyle -%}
+
+<div class="cart-page">
+  <header class="cart-page__header">
+    <h1 class="cart-page__title">{{ 'templates.cart.title' | t }}</h1>
+  </header>
+
+  {%- if cart.empty? -%}
+    <div class="cart-empty">
+      <p>{{ 'templates.cart.empty' | t }}</p>
+      <a href="{{ routes.root_url }}" class="button">{{ 'templates.cart.continue_shopping' | t }}</a>
+    </div>
+  {%- else -%}
+    <section class="main-cart-items" id="MainCartItems">
+      {%- section 'main-cart-items' -%}
+    </section>
+
+    <section class="gift-wrapping">
+      <h2 class="gift-wrapping__title">{{ 'templates.cart.gift_wrapping.title' | t }}</h2>
+      <div class="gift-wrapping__options">
+        <div class="gift-wrapping__option">
+          <input type="checkbox" id="gift-wrapping" name="gift-wrapping" value="yes">
+          <label for="gift-wrapping">{{ 'templates.cart.gift_wrapping.option' | t }} - {{ 'templates.cart.gift_wrapping.price' | t: price: 5.0 | money }}</label>
+        </div>
+      </div>
+      <div class="gift-message" id="gift-message" style="display: none;">
+        <label for="message">{{ 'templates.cart.gift_wrapping.message' | t }}</label>
+        <textarea id="message" name="message" placeholder="{{ 'templates.cart.gift_wrapping.message_placeholder' | t }}"></textarea>
+      </div>
+    </section>
+
+    <section class="cart-upsell">
+      <h2 class="cart-upsell__title">{{ 'templates.cart.upsell.title' | t }}</h2>
+      {%- section 'upsell' -%}
+    </section>
+
+    <section class="main-cart-footer">
+      {%- section 'main-cart-footer' -%}
+    </section>
+  {%- endif -%}
+</div>
+
+<script>
+  // Toggle gift message field
+  document.addEventListener('DOMContentLoaded', function() {
+    const giftWrapping = document.getElementById('gift-wrapping');
+    const giftMessage = document.getElementById('gift-message');
+
+    if (giftWrapping && giftMessage) {
+      giftWrapping.addEventListener('change', function() {
+        giftMessage.style.display = this.checked ? 'block' : 'none';
+      });
+    }
+
+    // AJAX setup for cart updates
+    setupCartUpdates();
+  });
+
+  function setupCartUpdates() {
+    // This function would handle AJAX updates to the cart
+    // It's a placeholder for the actual implementation
+  }
+</script>

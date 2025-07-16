@@ -1,0 +1,323 @@
+{% comment %}
+  Collectibles Section
+  Purpose: Show limited-edition models or historical portraits with rarity indicators
+  Target: 25-44 age decor lovers and memory keepers
+{% endcomment %}
+
+{%- schema -
+{
+  "name": "Collectibles",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Limited Edition Collectibles"
+    },
+    {
+      "type": "select",
+      "id": "collection_type",
+      "label": "Collection Type",
+      "options": [
+        {
+          "value": "all",
+          "label": "All Collectibles"
+        },
+        {
+          "value": "limited",
+          "label": "Limited Editions"
+        },
+        {
+          "value": "historical",
+          "label": "Historical Portraits"
+        },
+        {
+          "value": "investment",
+          "label": "Investment Pieces"
+        }
+      ],
+      "default": "all"
+    },
+    {
+      "type": "number",
+      "id": "products_to_show",
+      "label": "Products to Show",
+      "min": 1,
+      "max": 12,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile)",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rarity_indicator",
+      "label": "Show Rarity Indicator",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_provenance",
+      "label": "Show Provenance Details",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collectibles",
+      "category": "Art",
+      "settings": {
+        "heading": "Limited Edition Collectibles"
+      }
+    }
+  ]
+}
+{%- endschema -
+
+<div class="collectibles-section" style="background-color: {{ section.settings.background_color }};">
+  <div class="container">
+    <h2 class="collectibles-heading">{{ section.settings.heading }}</h2>
+
+    {%- comment -%}
+      Filter products based on selected collection type
+    {%- endcomment -%}
+    {%- assign collection_type = section.settings.collection_type -%}
+    {%- assign products_to_show = section.settings.products_to_show -%}
+
+    {%- if collection_type == 'all' -%}
+      {%- assign collectible_products = collections.collectibles.products | limit: products_to_show -%}
+    {%- else -%}
+      {%- assign collectible_products = collections.collectibles.products | where: 'tags', collection_type | limit: products_to_show -%}
+    {%- endif -%}
+
+    <div class="collectibles-grid" data-columns-desktop="{{ section.settings.columns_desktop }}" data-columns-mobile="{{ section.settings.columns_mobile }}">
+      {%- for product in collectible_products -%}
+        <div class="collectible-item" aria-label="{{ product.title }}" tabindex="0">
+          <div class="product-image-container">
+            {%- if product.featured_image -%}
+              <img
+                src="{{ product.featured_image | img_url: '500x500' }}"
+                alt="{{ product.title }}"
+                class="product-image"
+                loading="lazy"
+              >
+            {%- endif -%}
+            {%- if section.settings.show_rarity_indicator and product.tags contains 'limited' -%}
+              <div class="rarity-badge">
+                <span>Limited Edition</span>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="product-info">
+            <h3 class="product-title">{{ product.title }}</h3>
+            <p class="product-price">{{ product.price | money }}</p>
+
+            {%- if section.settings.show_provenance -%}
+              <div class="provenance-details">
+                {%- if product.metafields.provenance.origin -%}
+                  <p class="origin"><strong>Origin:</strong> {{ product.metafields.provenance.origin }}</p>
+                {%- endif -%}
+                {%- if product.metafields.provenance.year -%}
+                  <p class="year"><strong>Year:</strong> {{ product.metafields.provenance.year }}</p>
+                {%- endif -%}
+                {%- if product.metafields.provenance.edition_number -%}
+                  <p class="edition"><strong>Edition:</strong> {{ product.metafields.provenance.edition_number }}/{{ product.metafields.provenance.edition_size }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- if product.tags contains 'investment' -%}
+              <div class="investment-note">
+                <p><strong>Investment Value:</strong> Potential for appreciation</p>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <a href="{{ product.url }}" class="product-link" aria-label="View {{ product.title }}">View Details</a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .collectibles-section {
+    padding: 40px 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .collectibles-heading {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+  }
+
+  .collectibles-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .collectible-item {
+    flex: 1 1 calc(25% - 20px);
+    max-width: calc(25% - 20px);
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .collectible-item:hover {
+    transform: translateY(-5px);
+  }
+
+  .product-image-container {
+    position: relative;
+    padding-top: 100%;
+    overflow: hidden;
+  }
+
+  .product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product-image:hover {
+    transform: scale(1.05);
+  }
+
+  .rarity-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ffb703;
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .product-info {
+    padding: 15px;
+  }
+
+  .product-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .product-price {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .provenance-details {
+    margin-bottom: 15px;
+  }
+
+  .provenance-details p {
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  .investment-note {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #e6f7ff;
+    border-radius: 4px;
+  }
+
+  .investment-note p {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .product-link {
+    display: block;
+    padding: 10px 15px;
+    background-color: #023047;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .product-link:hover {
+    background-color: #219ebc;
+  }
+
+  @media screen and (max-width: 768px) {
+    .collectible-item {
+      flex: 1 1 calc(50% - 20px);
+      max-width: calc(50% - 20px);
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .collectible-item {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+</style>

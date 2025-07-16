@@ -1,4 +1,3 @@
-<!doctype html>
 <html class="js" lang="{{ request.locale.iso_code }}" dir="{{ request.locale.direction }}">
   <head>
     <meta charset="utf-8">
@@ -20,15 +19,31 @@
     {%- endunless -%}
 
     <title>
-      {{ page_title }}
-      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- if template contains 'product' -%}
+        {{ product.title | escape }} - {{ 'seo.product_suffix' | t: shop_name: shop.name }}
+      {%- elsif template contains 'collection' -%}
+        {{ collection.title | escape }} - {{ 'seo.collection_suffix' | t: shop_name: shop.name }}
+      {%- else -%}
+        {{ page_title }}
+        {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+        {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+        {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- endif -%}
     </title>
 
     {% if page_description %}
       <meta name="description" content="{{ page_description | escape }}">
+    {% else %}
+      {%- if template contains 'product' -%}
+        <meta name="description" content="{{ product.title | escape }} - {{ product.description | strip_html | truncate: 150 | escape }}">
+      {%- elsif template contains 'collection' -%}
+        <meta name="description" content="{{ collection.title | escape }} - {{ collection.description | strip_html | truncate: 150 | escape }}">
+      {%- endif -%}
     {% endif %}
+
+    {%- if template contains 'product' -%}
+      <meta name="keywords" content="{{ product.tags | join: ', ' | escape }}, custom oil painting, personalized artwork, {{ product.title | escape }}">
+    {%- endif -%}
 
     {% render 'meta-tags' %}
 
@@ -198,7 +213,6 @@
 
         --buttons-radius: {{ settings.buttons_radius }}px;
         --buttons-radius-outset: {% if settings.buttons_radius > 0 %}{{ settings.buttons_radius | plus: settings.buttons_border_thickness }}{% else %}0{% endif %}px;
-        --buttons-border-width: {% if settings.buttons_border_opacity > 0 %}{{ settings.buttons_border_thickness }}{% else %}0{% endif %}px;
         --buttons-border-opacity: {{ settings.buttons_border_opacity | divided_by: 100.0 }};
         --buttons-shadow-opacity: {{ settings.buttons_shadow_opacity | divided_by: 100.0 }};
         --buttons-shadow-visible: {% if settings.buttons_shadow_opacity > 0 %}1{% else %}0{% endif %};
@@ -226,9 +240,7 @@
         --variant-pills-shadow-blur-radius: {{ settings.variant_pills_shadow_blur }}px;
       }
 
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         box-sizing: inherit;
       }
 
@@ -299,6 +311,27 @@
       if (Shopify.designMode) {
         document.documentElement.classList.add('shopify-design-mode');
       }
+
+      // Lazy load images
+      document.addEventListener('DOMContentLoaded', function() {
+        const lazyImages = [].slice.call(document.querySelectorAll('img[loading="lazy"]'));
+
+        if ('IntersectionObserver' in window) {
+          let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                let lazyImage = entry.target;
+                lazyImage.src = lazyImage.dataset.src;
+                lazyImageObserver.unobserve(lazyImage);
+              }
+            });
+          });
+
+          lazyImages.forEach(function(lazyImage) {
+            lazyImageObserver.observe(lazyImage);
+          });
+        }
+      });
     </script>
   </head>
 
@@ -380,6 +413,32 @@
 
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+    {%- if template contains 'product' and product -%}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "{{ product.title | escape }}",
+          "description": "{{ product.description | strip_html | escape }}",
+          "image": "{{ product.featured_image | image_url: width: 800 }}",
+          "offers": [
+            {
+              "@type": "Offer",
+              "price": "{{ product.price | divided_by: 100.0 }}",
+              "priceCurrency": "{{ shop.currency }}",
+              "availability": "{{ product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
+            }
+          ]
+          {%- if product.metafields.artist.name -%},
+          "creator": {
+            "@type": "Person",
+            "name": "{{ product.metafields.artist.name | escape }}"
+          }
+          {%- endif -%}
+        }
+      </script>
     {%- endif -%}
   </body>
 </html>

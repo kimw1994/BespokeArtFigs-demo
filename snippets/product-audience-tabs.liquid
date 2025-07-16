@@ -1,0 +1,110 @@
+<div class="product-audience-tabs">
+  <div class="tabs-container">
+    <button class="tab-button active" data-tab="home-decor">{{ 'products.tabs.home_decor' | t }}</button>
+    <button class="tab-button" data-tab="gift-customization">{{ 'products.tabs.gift_customization' | t }}</button>
+    <button class="tab-button" data-tab="memory-preservation">{{ 'products.tabs.memory_preservation' | t }}</button>
+    <button class="tab-button" data-tab="collector-insights">{{ 'products.tabs.collector_insights' | t }}</button>
+  </div>
+  
+  <div class="tab-content active" id="home-decor">
+    <h3 class="tab-title">{{ 'products.tabs.home_decor_title' | t }}</h3>
+    <p>{{ 'products.tabs.home_decor_content' | t }}</p>
+    <!-- Add more content here -->
+  </div>
+  
+  <div class="tab-content" id="gift-customization">
+    <h3 class="tab-title">{{ 'products.tabs.gift_customization_title' | t }}</h3>
+    <p>{{ 'products.tabs.gift_customization_content' | t }}</p>
+    <!-- Add more content here -->
+  </div>
+  
+  <div class="tab-content" id="memory-preservation">
+    <h3 class="tab-title">{{ 'products.tabs.memory_preservation_title' | t }}</h3>
+    <p>{{ 'products.tabs.memory_preservation_content' | t }}</p>
+    <!-- Add more content here -->
+  </div>
+  
+  <div class="tab-content" id="collector-insights">
+    <h3 class="tab-title">{{ 'products.tabs.collector_insights_title' | t }}</h3>
+    <p>{{ 'products.tabs.collector_insights_content' | t }}</p>
+    <!-- Add more content here -->
+  </div>
+</div>
+
+<style>
+  .product-audience-tabs {
+    margin-top: 40px;
+  }
+  
+  .tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .tab-button {
+    padding: 10px 20px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .tab-button.active {
+    border-bottom-color: #000;
+    font-weight: bold;
+  }
+  
+  .tab-content {
+    display: none;
+    padding: 20px 0;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  
+  .tab-title {
+    margin-bottom: 15px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .tabs-container {
+      flex-direction: column;
+    }
+    
+    .tab-button {
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+    }
+    
+    .tab-button.active {
+      border-bottom: 1px solid #000;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active class from all buttons and content
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // Show corresponding content
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+  });
+</script>
